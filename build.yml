@@ -1,0 +1,77 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dopamine-rootless:
+    name: ios 16.3.1 dopamine (rootless)
+    runs-on: macos-14
+    timeout-minutes: 45
+    env:
+      THEOS: ${{ github.workspace }}/.theos-ci
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+
+      - name: brew tools
+        run: |
+          brew list make >/dev/null 2>&1 || brew install make
+          brew list ldid >/dev/null 2>&1 || brew install ldid
+          brew list dpkg >/dev/null 2>&1 || brew install dpkg
+
+      - name: cache theos
+        id: cache-theos
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.THEOS }}
+          key: theos-macos14-submodules-${{ hashFiles('.github/workflows/build.yml') }}
+
+      - name: install theos
+        if: steps.cache-theos.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/theos/theos.git "$THEOS"
+          git -C "$THEOS" submodule update --init --recursive
+
+      - name: find project root
+        id: src
+        run: |
+          if [ -f Makefile ] && [ -f Tweak.x ]; then
+            echo "dir=." >> "$GITHUB_OUTPUT"
+          elif [ -f safarisettingsdd/Makefile ] && [ -f safarisettingsdd/Tweak.x ]; then
+            echo "dir=safarisettingsdd" >> "$GITHUB_OUTPUT"
+          else
+            echo "could not find Makefile + Tweak.x" >&2
+            ls -la
+            exit 1
+          fi
+
+      - name: build rootless deb
+        working-directory: ${{ steps.src.outputs.dir }}
+        run: |
+          export THEOS="${{ env.THEOS }}"
+          export PATH="/opt/homebrew/opt/make/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:$PATH"
+          command -v gmake >/dev/null && MAKE=gmake || MAKE=make
+          "$MAKE" clean package THEOS_PACKAGE_SCHEME=rootless FINALPACKAGE=1 -j"$(sysctl -n hw.ncpu)"
+          ls -la packages
+
+      - name: upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: safarisettingsdd-dopamine-ios16-rootless
+          path: |
+            packages/*_iphoneos-arm64.deb
+            safarisettingsdd/packages/*_iphoneos-arm64.deb
+          if-no-files-found: error

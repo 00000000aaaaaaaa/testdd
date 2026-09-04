@@ -1,0 +1,9 @@
+package: com.safarisettingsdd.safarisettingsdd
+name: safarisettingsdd
+depends: firmware (>= 15.0), mobilesubstrate, preferenceloader
+version: 2.0.0
+architecture: iphoneos-arm64
+description: safari settings. hide favicons and disable pull to refresh. all options off by default.
+maintainer: safarisettingsdd
+author: safarisettingsdd
+section: tweaks

@@ -1,0 +1,9 @@
+{
+	Filter = {
+		Bundles = (
+			"com.apple.mobilesafari",
+			"com.apple.SafariViewService",
+			"com.apple.Safari.SafariViewService"
+		);
+	};
+}
