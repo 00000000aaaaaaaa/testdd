@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>safarisettingsdd</string>
+			<key>footerText</key>
+			<string>all options are off by default. after changing a toggle, force-quit safari.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.safarisettingsdd.safarisettingsdd</string>
+			<key>key</key>
+			<string>HideFavicons</string>
+			<key>label</key>
+			<string>hide favicons</string>
+			<key>PostNotification</key>
+			<string>com.safarisettingsdd.safarisettingsdd/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.safarisettingsdd.safarisettingsdd</string>
+			<key>key</key>
+			<string>DisablePullToRefresh</string>
+			<key>label</key>
+			<string>disable pull to refresh</string>
+			<key>PostNotification</key>
+			<string>com.safarisettingsdd.safarisettingsdd/ReloadPrefs</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>safarisettingsdd</string>
+</dict>
+</plist>
